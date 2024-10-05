@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: #f5f5f5;
+    }
+    .login-page {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f5f5;
+    }
+
+    .login-form {
+      width: 350px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    .login-form label {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: #333;
+      display: block;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff6347;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .login-form button:hover {
+      background-color: #e55340;
+    }
+
+    /* Dashboard styles */
+    .dashboard {
+      display: none;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      width: 20%;
+      background-color: #FDEAEF;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .sidebar h2 {
+      display: flex;
+      align-items: center;
+      color: #333;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar h2 img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .sidebar button {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      background: none; 
+      /*#F6A5A5 */
+      border: none;
+      padding: 10px 15px;
+      width: 100%;
+      text-align: left;
+      font-size: 1rem;
+      color: #ff6347;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .sidebar button i {
+      margin-right: 10px;
+    }
+
+    .sidebar button:hover {
+      background-color: #ffddc1;
+    }
+
+    .main-content {
+      width: 80%;
+      padding: 2rem;
+      background-color: #fff;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    /* Card */
+    .summary-cards {
+      display: flex;
+      justify-content: space-around;
+      margin: 2rem 0;
+    }
+
+    .card {
+      position: relative;
+      width: 22%;
+      background-color: #f5f5f5;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .chart-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart, .pie-chart, .transactions, .saving-goals {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .card:hover .expand {
+      display: block;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+
+    .card p {
+      font-size: 1.2rem;
+    }
+
+    /* Dark/Light Mode Toggle Button */
+  .mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #f0f0f0; /* Light background */
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .mode-toggle img {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Sign Out Button */
+  .sign-out {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    background-color: #ff6347; /* Tomato color for sign out */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .sign-out:hover {
+    background-color: #e55340;
+  }
+
+  /* Dark Mode Styles */
+  body.dark-mode {
+    background-color: #1e1e1e; /* Darker background for night mode */
+    color: #e0e0e0;
+    border-radius: 8px; /* Light text color for better contrast */
+  }
+
+  body.dark-mode .sidebar {
+    background-color: #5a4e4e; /* Dark sidebar */
+    color: #e55340;
+    border-radius: 8px;
+  }
+
+  body.dark-mode .sign-out:hover {
+    background-color: #f10808; /* Dark sidebar */
+    color: #0f0f0f;
+    border-radius: 8px;
+  }
+
+  body.dark-mode .main-content {
+    background-color: #2e2e2e; /* Dark main content area */
+  }
+
+  body.dark-mode .card {
+    background-color: #3c3c3c; /* Dark card background */
+    color: #e0e0e0; /* Light text color for card */
+  }
+  body.dark-mode .chart {
+    background-color: #3c3c3c; /* Dark card background */
+    color: #e0e0e0; /* Light text color for card */
+  }
+
+  body.dark-mode .pie-chart {
+    background-color: #3c3c3c; /* Dark card background */
+    color: #e0e0e0; /* Light text color for card */
+  }
+
+  body.dark-mode .transactions  {
+    background-color: #444; /* Darker header for the transactions table */
+  }
+
+  body.dark-mode .transactions th {
+    background-color: #e93d3d;
+    
+    ;/* Darker header for the transactions table */
+  }
+
+  body.dark-mode .transactions td {
+    background-color: #3c3c3c; /* Darker rows in transactions table */
+  }
+
+  body.dark-mode .saving-goals {
+    background-color: #3c3c3c; /* Darker background for saving goals */
+  }
+
+  body.dark-mode .goal-progress {
+    background-color: #555; /* Progress background */
+  }
+
+  body.dark-mode .sign-out {
+    background-color: #ff6347; /* Maintain tomato color for sign-out button */
+  }
+
+
+  body.dark-mode .sign-out {
+    background-color: #333;
+  }
+
+    /* Expand icon and percentage */
+    .expand {
+      display: none;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+
+    .percentage {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.9rem;
+    }
+
+    .percentage.green {
+      color: green;
+    }
+
+    .percentage.red {
+      color: red;
+    }
+
+    /* Flex container for charts */
+    /* .chart-container {
+        width: 50%;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    } */
+
+
+    .chart-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+        /* Custom legend styling */
+    .legend {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+    .legend-item span {
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .chart {
+      width: 704px;
+      height: 303px;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .pie-chart {
+      width: 720px;
+      height: 310px;
+      background-color: rgb(243, 236, 236);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+
+    .transactions, .saving-goals {
+      width: 720px;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .transactions table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px; /* Add this line to round the table corners */
+      overflow: hidden; /* Ensures that the content inside respects the border radius */
+    }
+
+    .transactions th, .transactions td {
+      padding: 0.5rem;
+      border: none;
+      text-align: left;
+      background-color: #fff; /* Optional: Makes sure the content doesn't overlap the rounded border */
+    }
+
+    .transactions th {
+      background-color: #ffddc1;
+    }
+
+    .saving-goals {
+      width: 426px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .goal {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .goal-progress {
+      width: 75%;
+      background-color: #ddd;
+      height: 8px;
+      border-radius: 6px;
+      margin-left: 0.5rem;
+      position: relative;
+    }
+
+    .goal-progress span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: #ff6347;
+      border-radius: 6px;
+    }
+
+    .pie-chart canvas, .chart canvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+  </style>
+</head>
+<body>
+    <!-- Login Page -->
+  <div class="login-page">
+    <div class="login-form">
+      <h2>Login</h2>
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
+
+      <button id="loginBtn">Login</button>
+    </div>
+  </div>
+
+  <!-- Finance Dashboard -->
+  <div class="sidebar">
+    <h2><img src="munim.webp" alt="Logo"> Munim</h2>
+    <button><i class="fas fa-tachometer-alt"></i>Dashboard</button>
+    <button><i class="fas fa-exchange-alt"></i>Transactions</button>
+    <button><i class="fas fa-wallet"></i>Wallet</button>
+    <button><i class="fas fa-bullseye"></i>Goals</button>
+    <button><i class="fas fa-chart-pie"></i>Analytics</button>
+    <button><i class="fas fa-balance-scale"></i>Budget</button>
+    <button><i class="fas fa-cog"></i>Settings</button>
+  </div>
+
+  <!-- Dark/Light Mode Button at Bottom Left -->
+  <button id="darkModeToggle" class="mode-toggle">
+    <img src="dark.png" alt="Dark/Light Mode" width="30px">
+  </button>
+
+  <!-- Sign Out Button at Top Right -->
+  <button id="signOutBtn" class="sign-out">
+    Sign Out
+  </button>
+
+  <div class="main-content">
+    <div class="header">
+      <h1>Welcome,User </h1>
+      <img src="profile.png" alt="Profile Picture">
+    </div>
+
+    <div class="summary-cards">
+      <div class="card">
+        <h3>Total Balance</h3>
+        <p>$95,000</p>
+        <i class="fas fa-angle-right expand"></i>
+        <span class="percentage green">+10%</span>
+      </div>
+      <div class="card">
+        <h3>Income</h3>
+        <p>$8,500</p>
+        <i class="fas fa-angle-right expand"></i>
+        <span class="percentage red">-10%</span>
+      </div>
+      <div class="card">
+        <h3>Expenses</h3>
+        <p>$6,500</p>
+        <i class="fas fa-angle-right expand"></i>
+        <span class="percentage red">+10%</span>
+      </div>
+      <div class="card">
+        <h3>Savings</h3>
+        <p>$93,000</p>
+        <i class="fas fa-angle-right expand"></i>
+        <span class="percentage green">+10%</span>
+      </div>
+    </div>
+
+    <!-- Flex container for both charts -->
+    <div class="chart-container">
+      <div class="chart">
+        <canvas id="barChart"></canvas>
+      </div>
+      
+      <div class="pie-chart">
+        <canvas id="pieChart"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span style="background-color:#00c3ff;"></span>Groceries</div>
+          <div class="legend-item"><span style="background-color:#26e070;"></span>Shopping</div>
+          <div class="legend-item"><span style="background-color:#005bff;"></span>Education</div>
+          <div class="legend-item"><span style="background-color:#e2c72f;"></span>Subscription</div>
+          <div class="legend-item"><span style="background-color:#9656e7;"></span>Savings</div>
+          <div class="legend-item"><span style="background-color:#c49a6c;"></span>Rent</div>
+      </div>
+      
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="transactions">
+        <h3>Recent Transactions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Spotify</td>
+              <td>01/01/24</td>
+              <td>$5</td>
+              <td>Debit Card</td>
+              <td>Subscription</td>
+            </tr>
+            <tr>
+              <td>Laptop</td>
+              <td>02/03/24</td>
+              <td>$800</td>
+              <td>Credit Card</td>
+              <td>Shopping</td>
+            </tr>
+            <tr>
+              <td>Book</td>
+              <td>03/03/24</td>
+              <td>$10</td>
+              <td>Cash</td>
+              <td>Education</td>
+            </tr>
+            <tr>
+              <td>Rent</td>
+              <td>01/09/24</td>
+              <td>$200</td>
+              <td>Cash</td>
+              <td>Rent</td>
+            </tr>
+            <tr>
+              <td>School Fee</td>
+              <td>02/09/24</td>
+              <td>$80</td>
+              <td>UPI</td>
+              <td>Education</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="saving-goals">
+        <h3>Saving Goals</h3>
+        <div class="goal">
+          <span>Verna</span>
+          <div class="goal-progress">
+            <span style="width: 15%;"></span>
+          </div>
+        </div>
+        <div class="goal">
+          <span>iPad</span>
+          <div class="goal-progress">
+            <span style="width: 85%;"></span>
+          </div>
+        </div>
+        <div class="goal">
+          <span>Samsung TV</span>
+          <div class="goal-progress">
+            <span style="width: 95%;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Login functionality
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.addEventListener('click', function() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username && password) {
+        document.querySelector('.login-page').style.display = 'none';
+        document.querySelector('.dashboard').style.display = 'flex';
+
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        datasets: [
+          {
+            label: 'Income',
+            data: [1200, 1900, 1700, 2500, 2100, 1400, 1800, 2200],
+            backgroundColor: '#ff6347'
+          },
+          {
+            label: 'Expense',
+            data: [800, 1100, 1300, 1400, 1100, 1600, 1200, 1500],
+            backgroundColor: '#ffddc1'
+          }
+        ]
+      }
+      });
+
+    const ctx = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Groceries', 'Shopping', 'Education', 'Subscription', 'Savings', 'Rent'],
+                datasets: [{
+                    data: [25, 30, 7, 10, 20, 8], // Percentage values
+                    backgroundColor: [
+                        '#00c3ff',  // Groceries
+                        '#26e070',  // Shopping
+                        '#005bff',  // Education
+                        '#e2c72f',  // Subscription
+                        '#9656e7',  // Savings
+                        '#c49a6c'   // Rent
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false,  // Disable default legend
+                        onClick: (e, legendItem) => {
+                            const index = legendItem.index;
+                            const meta = pieChart.getDatasetMeta(0);
+                            // Toggle visibility of the pie section
+                            meta.data[index].hidden = !meta.data[index].hidden;
+                            pieChart.update();
+                        }
+                    }
+                }
+            }
+        });
+    // Dark/Light Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    // Optional: Save user preference in localStorage
+    if (localStorage.getItem('dark-mode') === 'enabled') {
+      document.body.classList.add('dark-mode');
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('dark-mode', 'enabled');
+      } else {
+        localStorage.setItem('dark-mode', 'disabled');
+      }
+    });
+
+    // Sign Out Button
+    const signOutBtn = document.getElementById('signOutBtn');
+    signOutBtn.addEventListener('click', () => {
+      // Redirect to the sign-out page (replace with your sign-out logic)
+      window.location.href = '/signout';
+    });
+
+  </script>
+</body>
+</html>
